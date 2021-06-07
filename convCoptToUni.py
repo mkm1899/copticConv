@@ -16,21 +16,21 @@ def options():
     options = 0
     for i in range(0, len(sys.argv)):
         if sys.argv[i][0] == '-' and sys.argv[i][1] == '-':
-            if sys.argv[1][2:].lower() == 'help':
+            if sys.argv[i][2:].lower() == 'help':
                 options = options | 1
-            elif sys.argv[1][2:].lower() == 'noshift':
+            elif sys.argv[i][2:].lower() == 'noshift':
                 options = options | 2
-            elif sys.argv[1][2:].lower() == 'seperateFiles':
+            elif sys.argv[i][2:].lower() == 'seperatefiles':
                 options = options | 4
         elif sys.argv[i][0] == '-':
-            if sys.argv[1][1].lower() == 'h':
+            if sys.argv[i][1].lower() == 'h':
                 options = options | 1
-            elif sys.argv[1][1].lower() == 'n':
+            elif sys.argv[i][1].lower() == 'n':
                 options = options | 2
-            elif sys.argv[1][1].lower() == 's':
+            elif sys.argv[i][1].lower() == 's':
                 options = options | 4
         else:
-            arguments.append(sys.argv[i])
+            arguments.append(sys.argv[i]) #arguments does not include options
     return options 
 
 def asksHelp(optionsRequested):
@@ -58,23 +58,25 @@ def convertImagesToText(optionsRequested, isPdf):
 
     #from pdf but wants the output it one file            
     elif isPdf:
+        #print("HERE")
         files = os.listdir(".\\" + randomTempFolderName)
         i = 0
         for x in files:
             if ".png" in x:
                 if i == 0: 
                     os.system("tesseract " + folder + x + " stdout -l cop > " + arguments[2] + ".txt") #this makes sure to empty the file before write
-                    print()
+                    #print("HERE 68")
                 else: os.system("tesseract " + folder + x + " stdout -l cop >> " + arguments[2] + ".txt")
                 i+=1
         if not asksNoShift(optionsRequested):
             shiftAccent.shiftAccent(arguments[2] + ".txt")
-
+    
     else:
-        os.system("tesseract " + arguments[1] + " " + arguments[2] + " -l cop")
+        os.system("tesseract " + '"' + arguments[1] + '"' + " stdout -l cop > " + arguments[2] + ".txt ")
         if not asksNoShift(optionsRequested):
             shiftAccent.shiftAccent(arguments[2] + ".txt")
 
+    #print("something else")
 
 
 
@@ -83,6 +85,7 @@ optionsRequested = options()
 if  asksHelp(optionsRequested):
     print("standard use:")
     print("\t python convCoptToUni.py [file_name].pdf [output_file_name] -[options]")
+    print("\t python convCoptToUni.py [picture_name] [output_file_name] -[options]")
     print("options include:")
     print("\t -h or --help for help: python convCoptToUni.py -h")
     print("\t -n or --noShift to remove the accent shifting I made to counter the flaw in the tesseract model.")
@@ -101,8 +104,17 @@ if ".pdf" in arguments[1]:
     os.mkdir(".\\" + randomTempFolderName)
     #converts pdf to a set of images
     os.system("magick -density 300 " + sys.argv[1] + " .\\" + randomTempFolderName+ "\\" + "x.png")
+    
+    #removes page bounds
+    for i in range(len(arguments[1])-1, 0, -1):
+        if arguments[1][i] == '[':
+            arguments[1] = arguments[1][0:i]
+            break
+        elif arguments[1][i] == '.':
+            break
+    
     #converts set of images into
     convertImagesToText(optionsRequested, True)
     os.system("rmdir /s/q .\\" + randomTempFolderName)
-
-convertImagesToText(optionsRequested, False)
+else:
+    convertImagesToText(optionsRequested, False)
