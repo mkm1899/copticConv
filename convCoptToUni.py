@@ -99,6 +99,7 @@ if  asksHelp(optionsRequested):
 if len(arguments) < 3:
     print("need to add file name as argument. For example:")
     print("python convCoptToUni.py [file_name].pdf [output_file_name]")
+    print("For more help use -h or --help option")
     sys.exit()
 
 #since I removed all options in sys.argv[] in arguments[] that means arguments[1] has the file that needs to be converted assuming user put it in the right order
