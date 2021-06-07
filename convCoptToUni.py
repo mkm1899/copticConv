@@ -91,6 +91,9 @@ if  asksHelp(optionsRequested):
     print("\t -n or --noShift to remove the accent shifting I made to counter the flaw in the tesseract model.")
     print("\t\t Use -n if all the accents are shifted to the left of where it is supposed to be")
     print("\t -s or --seperateFiles to seperate each page of a pdf into its own seperate text file")
+    print("\t python convCoptToUni.py [file_name].pdf[page_lower-page_higher] [output_file_name] -[options]")
+    print("\t python convCoptToUni.py [file_name].pdf[page_num] [output_file_name] -[options]")
+    print("\t\t NOTE PAGE NUMBERS START AT 0")
     sys.exit()
 
 if len(arguments) < 3:
